@@ -2,7 +2,7 @@
 {
 	public class ImageStrategy : IConverter
 	{
-		public bool Build()
+		public bool Save()
 		{
 			throw new NotImplementedException();
 		}
