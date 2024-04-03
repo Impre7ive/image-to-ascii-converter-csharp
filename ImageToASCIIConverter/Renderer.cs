@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ImageToASCIIConverter
 {
@@ -35,9 +37,48 @@ namespace ImageToASCIIConverter
 				result.AppendLine();
 			}
 
-			File.WriteAllText(project.ResultPath , result.ToString());
+			File.WriteAllText(project.ResultTxtPath , result.ToString());
+			SaveToImage(result.ToString(), project, resizedImage);
 
 			//_converter.Save();
+		}
+
+		private void SaveToImage(string asciiCode, Project project, Bitmap resizedImage)
+		{
+			Font font = new Font("Courier New", 12);
+			Bitmap bitmap = new Bitmap((int)(resizedImage.Width * 12.058), (int)(resizedImage.Height * 18.3));
+
+			float x = 10;
+			float y = 10;
+
+			int indexX, indexY;
+			indexX = indexY = 0;
+
+			using (Graphics graphics = Graphics.FromImage(bitmap))
+			{
+				graphics.Clear(ColorTranslator.FromHtml("#171717"));
+
+				foreach (char c in asciiCode)
+				{
+					if (c == '\n')
+					{
+						indexY++;
+						indexX = 0;
+
+						x = 10; 
+						y += font.Height - 0.85f;
+					}
+					else if (c != '\r')
+					{
+						Color charColor = resizedImage.GetPixel(indexX, indexY);
+						graphics.DrawString(c.ToString(), font, new SolidBrush(charColor), new PointF(x, y));
+						x += font.Size;
+						indexX++;
+					}
+				}
+			}
+
+			bitmap.Save(project.ResultImagePath, ImageFormat.Bmp);
 		}
 	}
 }

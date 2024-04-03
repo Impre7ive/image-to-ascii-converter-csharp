@@ -33,7 +33,8 @@
 						 Extension = extension,
 						 Folder = folderName,
 						 SourcePath = file,
-						 ResultPath = dir + $"\\result.txt"
+						 ResultTxtPath = dir + $"\\result.txt",
+						 ResultImagePath = dir + $"\\result.bmp"
 					});
 				}
 			}
