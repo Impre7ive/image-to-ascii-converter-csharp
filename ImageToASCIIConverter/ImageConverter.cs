@@ -18,20 +18,19 @@ namespace ImageToASCIIConverter
 			var scaledImage = new Bitmap(image, new Size(_renderer.asciiImageTextWidth, newHeight));
 			StringBuilder result = _renderer.GetFrameASCII(scaledImage);
 			SaveToTxt(project, result);
-			SaveToImage(result.ToString(), project, scaledImage);
+			SaveToImage(result.ToString(), project, scaledImage, image);
 		}
 		private static void SaveToTxt(Project project, StringBuilder result)
 		{
 			File.WriteAllText(project.ResultTxtPath, result.ToString());
 		}
 
-		private void SaveToImage(string asciiCode, Project project, Bitmap resizedImage)
+		private void SaveToImage(string asciiCode, Project project, Bitmap resizedImage, Bitmap originalImage)
 		{
-			Font font = new Font("Courier New", 12);
-			Bitmap bitmap = new Bitmap((int)(resizedImage.Width * 12.1595), (int)(resizedImage.Height * 18.45));
-
-			float x = 10;
-			float y = 10;
+			Font font = new ("Courier New", (float)originalImage.Width / (float)resizedImage.Width);
+			Bitmap bitmap = new Bitmap(originalImage.Width, originalImage.Height);
+			float x = 0;
+			float y = 0;
 
 			int indexX, indexY;
 			indexX = indexY = 0;
@@ -46,15 +45,14 @@ namespace ImageToASCIIConverter
 					{
 						indexY++;
 						indexX = 0;
-
-						x = 10;
-						y += font.Height - 0.85f;
+						x = 0;
+						y += font.Height + ((float)originalImage.Height / ((float)font.Height * (float)resizedImage.Height) - 1.12f) ;
 					}
 					else if (c != '\r')
 					{
 						Color charColor = resizedImage.GetPixel(indexX, indexY);
 						graphics.DrawString(c.ToString(), font, new SolidBrush(charColor), new PointF(x, y));
-						x += font.Size;
+						x += font.SizeInPoints;
 						indexX++;
 					}
 				}

@@ -6,7 +6,7 @@ namespace ImageToASCIIConverter
 	public class Renderer
 	{
 		public readonly string asciiContainer = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-		public readonly int asciiImageTextWidth = 150;
+		public readonly int asciiImageTextWidth = 170;
 		public readonly float spacingScale = 0.65f;
 
 		public StringBuilder GetFrameASCII(Bitmap scaledImage)
