@@ -2,13 +2,13 @@
 {
 	static class FormatFactory
 	{
-		private static Dictionary<Category, IConverter> _strategies = new Dictionary<Category, IConverter>() 
+		private static Dictionary<Category, Func<Renderer, IConverter>> _strategies = new Dictionary<Category, Func<Renderer, IConverter>>() 
 		{
-			{ Category.Image, new ImageStrategy() }
+			{ Category.Image, renderer => new ImageConverter(renderer) }
 		};
-		public static IConverter? GetConverter(Category category)
+		public static IConverter? GetConverter(Category category, Renderer renderer)
 		{
-			return _strategies.ContainsKey(category) ? _strategies[category] : null;
+			return _strategies.ContainsKey(category) ? _strategies[category](renderer) : null;
 		}
 	}
 }

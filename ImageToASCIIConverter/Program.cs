@@ -10,12 +10,12 @@
 			
 			if (project != null)
 			{
-				var converter = FormatFactory.GetConverter(project.Category);
+				var renderer = new Renderer();
+				var converter = FormatFactory.GetConverter(project.Category, renderer);
 
 				if (converter != null)
 				{
-					var renderContext = new Renderer(converter);
-					renderContext.Convert(project);
+					converter.Convert(project);
 				}
 			}
 		}
