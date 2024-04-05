@@ -13,10 +13,7 @@
 				var renderer = new Renderer();
 				var converter = FormatFactory.GetConverter(project.Category, renderer);
 
-				if (converter != null)
-				{
-					converter.Convert(project);
-				}
+				converter?.Convert(project);
 			}
 		}
 	}

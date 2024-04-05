@@ -2,8 +2,8 @@
 {
 	public static class ProjectManager
 	{
-		private static readonly List<Project> _projects = new List<Project>();
-		private static readonly Dictionary<Category, Action<Project, string, string>> _projectPath = new Dictionary<Category, Action<Project, string, string>>() {
+		private static readonly List<Project> _projects = new();
+		private static readonly Dictionary<Category, Action<Project, string, string>> _projectPath = new() {
 			{Category.Image, (project, dir, extension) => { project.ResultTxtPath = dir + $"\\result.txt"; project.ResultImagePath = dir + $"\\result{extension}";} },
 			{Category.Animation, (project, dir, extension) => { project.ResultAnimationPath = dir + $"\\result{extension}";} },
 			{Category.Video, (project, dir, extension) => { project.ResultVideoPath = dir + $"\\result{extension}";} },
@@ -43,7 +43,6 @@
 					};
 
 					_projectPath[category](project, dir, extension);
-
 					_projects.Add(project);
 				}
 			}
