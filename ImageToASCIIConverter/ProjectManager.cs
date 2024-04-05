@@ -3,10 +3,16 @@
 	public static class ProjectManager
 	{
 		private static readonly List<Project> _projects = new List<Project>();
+		private static readonly Dictionary<Category, Action<Project, string, string>> _projectPath = new Dictionary<Category, Action<Project, string, string>>() {
+			{Category.Image, (project, dir, extension) => { project.ResultTxtPath = dir + $"\\result.txt"; project.ResultImagePath = dir + $"\\result{extension}";} },
+			{Category.Animation, (project, dir, extension) => { project.ResultAnimationPath = dir + $"\\result{extension}";} },
+			{Category.Video, (project, dir, extension) => { project.ResultVideoPath = dir + $"\\result{extension}";} },
+			{Category.None, (project, dir, extension) => { } }
+		};
 
-		private static readonly string[] _imageExtensions = { ".jpg", ".jpeg", ".png", ".bmp" };
+		private static readonly string[] _imageExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".ico" };
 		private static readonly string[] _videoExtensions = { ".mp4", ".avi", ".mov", ".wmv", ".mkv" };
-		private static readonly string[] _animationExtensions = { ".gif", ".webm", ".flv", ".swf", ".mp4" };
+		private static readonly string[] _animationExtensions = { ".gif" };
 
 		static ProjectManager()
 		{
@@ -26,16 +32,19 @@
 				{
 					var extension = Path.GetExtension(file);
 					var folderName = Path.GetFileName(dir);
+					var category = GetCategory(extension);
 
-					_projects.Add(new Project
+					var project = new Project
 					{
-						 Category = GetCategory(extension),
-						 Extension = extension,
-						 Folder = folderName,
-						 SourcePath = file,
-						 ResultTxtPath = dir + $"\\result.txt",
-						 ResultImagePath = dir + $"\\result.bmp"
-					});
+						Category = category,
+						Extension = extension,
+						Folder = folderName,
+						SourcePath = file,
+					};
+
+					_projectPath[category](project, dir, extension);
+
+					_projects.Add(project);
 				}
 			}
 		}
