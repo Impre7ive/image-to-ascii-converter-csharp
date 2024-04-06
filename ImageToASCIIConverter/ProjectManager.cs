@@ -6,7 +6,11 @@
 		private static readonly Dictionary<Category, Action<Project, string, string>> _projectPath = new() {
 			{Category.Image, (project, dir, extension) => { project.ResultTxtPath = dir + $"\\result.txt"; project.ResultImagePath = dir + $"\\result{extension}";} },
 			{Category.Animation, (project, dir, extension) => { project.ResultAnimationPath = dir + $"\\result{extension}";} },
-			{Category.Video, (project, dir, extension) => { project.ResultVideoPath = dir + $"\\result{extension}";} },
+			{Category.Video, (project, dir, extension) => { 
+				project.ResultVideoPath = dir + $"\\result{extension}";
+				project.ResultAudioPath = dir + $"\\result-audio.mp3";
+				project.ResultVideoWithSoundPath = dir + $"\\result-with-sound{extension}";
+			} },
 			{Category.None, (project, dir, extension) => { } }
 		};
 
@@ -98,7 +102,6 @@
 			Console.WriteLine("Your choice: ");
 			var projectNumberString = Console.ReadLine();
 			int.TryParse(projectNumberString, out int projectNumber);
-
 			return projectNumber;
 		}
 	}

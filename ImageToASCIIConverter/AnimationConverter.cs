@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 
 namespace ImageToASCIIConverter
 {
@@ -15,7 +14,7 @@ namespace ImageToASCIIConverter
 
 		public void Convert(Project project)
 		{	
-			Image result = Image.FromFile(project.SourcePath);
+			var result = Image.FromFile(project.SourcePath);
 			SaveToAnimation(project, result);
 		}
 
@@ -23,10 +22,10 @@ namespace ImageToASCIIConverter
 		{
 			var bitmaps = new List<Bitmap>();
 
-			using (Image gifImage = Image.FromFile(project.SourcePath))
+			using (var gifImage = Image.FromFile(project.SourcePath))
 			{
-				FrameDimension dimension = new FrameDimension(gifImage.FrameDimensionsList[0]);
-				int frameCount = gifImage.GetFrameCount(dimension);
+				var dimension = new FrameDimension(gifImage.FrameDimensionsList[0]); //FrameDimension.Time
+				var frameCount = gifImage.GetFrameCount(dimension);
 
 				for (int i = 0; i < frameCount; i++)
 				{
@@ -35,7 +34,7 @@ namespace ImageToASCIIConverter
 					var frame = new Bitmap(gifImage);
 					var newHeight = _renderer.GetASCIITextHeight(frame);
 					var scaledFrame = new Bitmap(frame, new Size(_renderer.asciiImageTextWidth, newHeight));
-					StringBuilder resultAscii = _renderer.GetFrameASCII(scaledFrame);
+					var resultAscii = _renderer.GetFrameASCII(scaledFrame);
 					var originalSizeAsciiFrame = _renderer.GetAsciiFrame(animation, scaledFrame, resultAscii.ToString());
 
 					bitmaps.Add(originalSizeAsciiFrame);
@@ -55,16 +54,14 @@ namespace ImageToASCIIConverter
 			{
 				foreach (var imagePath in bitmaps)
 				{
-					MagickImage image = new MagickImage(_renderer.ImageToByte(imagePath));
+					var image = new MagickImage(_renderer.ImageToByte(imagePath));
 					imagePath.Dispose();
 					//image.AnimationDelay = 50;
 					collection.Add(image);
 				}
 
 				bitmaps.Clear();
-
 				collection.OptimizePlus();
-
 				collection.Write(resultAnimationPath, MagickFormat.Gif);
 			}
 

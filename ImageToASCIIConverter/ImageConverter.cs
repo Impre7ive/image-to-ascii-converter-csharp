@@ -16,8 +16,7 @@ namespace ImageToASCIIConverter
 			var image = new Bitmap(project.SourcePath);
 			var newHeight = _renderer.GetASCIITextHeight(image);
 			var scaledImage = new Bitmap(image, new Size(_renderer.asciiImageTextWidth, newHeight));
-			StringBuilder result = _renderer.GetFrameASCII(scaledImage);
-
+			var result = _renderer.GetFrameASCII(scaledImage);
 			var originalSizeAsciiFrame = _renderer.GetAsciiFrame(image, scaledImage, result.ToString());
 
 			SaveToTxt(project, result);
@@ -27,12 +26,13 @@ namespace ImageToASCIIConverter
 			scaledImage.Dispose();
 			result.Clear();
 			originalSizeAsciiFrame.Dispose();
+
+			Console.WriteLine("Image created successfully!");
 		}
 
 		private void SaveToImage(Project project, Bitmap bitmap)
 		{
 			var format = _renderer.GetFormat(project.Extension) ?? ImageFormat.Bmp;
-
 			bitmap.Save(project.ResultImagePath, format);
 		}
 

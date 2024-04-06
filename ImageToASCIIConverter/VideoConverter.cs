@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using OpenCvSharp;
@@ -25,11 +24,9 @@ namespace ImageToASCIIConverter
 				return;
 			}
 
-			// Create a VideoWriter object to write the modified frames
 			using var videoWriter = new VideoWriter(project.ResultVideoPath, FourCC.Default, 30, new OpenCvSharp.Size((int)videoCapture.FrameWidth, (int)videoCapture.FrameHeight));
-			Mat frame = new Mat();
+			var frame = new Mat();
 
-			// Loop through the frames
 			while (true)
 			{
 				videoCapture.Read(frame);
@@ -40,29 +37,31 @@ namespace ImageToASCIIConverter
 				var bitmap = BitmapConverter.ToBitmap(frame);
 				var newHeight = _renderer.GetASCIITextHeight(bitmap);
 				var scaledFrame = new Bitmap(bitmap, new System.Drawing.Size(_renderer.asciiImageTextWidth, newHeight));
-				StringBuilder resultAscii = _renderer.GetFrameASCII(scaledFrame);
+				var resultAscii = _renderer.GetFrameASCII(scaledFrame);
 				var originalSizeAsciiFrame = _renderer.GetAsciiFrame(bitmap, scaledFrame, resultAscii.ToString());
 				var newFrame = BitmapConverter.ToMat(originalSizeAsciiFrame);
 
 				videoWriter.Write(newFrame);
 
-				// Display the frame (optional)
+				// Display the frame 
 				Cv2.ImShow("Frame", newFrame);
-				Cv2.WaitKey(1); // Adjust waitKey value to control frame rate
+				Cv2.WaitKey(1);
 			}
 
 			videoCapture.Release();
 			videoWriter.Release();
 			Cv2.DestroyAllWindows();
 
-			ExtractAudio(project.SourcePath, project.SourcePath.Replace(".mp4", "-gg.mp3"));
-			MergeAudioAndVideo(project.ResultVideoPath, project.SourcePath.Replace(".mp4", "-gg.mp3"), project.ResultVideoPath.Replace(".mp4", "-music.mp4"));
+			ExtractAudio(project.SourcePath, project.ResultAudioPath);
+			MergeAudioAndVideo(project.ResultVideoPath, project.ResultAudioPath, project.ResultVideoWithSoundPath);
+
+			Console.WriteLine("Video created successfully!");
 		}
 		static void ExtractAudio(string inputVideoPath, string audioPath)
 		{
-			string ffmpegArgs = $"-i {inputVideoPath} -q:a 0 -map a {audioPath}";
+			var ffmpegArgs = $"-i {inputVideoPath} -q:a 0 -map a {audioPath}";
 
-			ProcessStartInfo startInfo = new ProcessStartInfo
+			var startInfo = new ProcessStartInfo
 			{
 				FileName = "ffmpeg",
 				Arguments = ffmpegArgs,
@@ -71,7 +70,7 @@ namespace ImageToASCIIConverter
 				CreateNoWindow = false
 			};
 
-			using (Process process = Process.Start(startInfo))
+			using (var process = Process.Start(startInfo)!)
 			{
 				process.WaitForExit();
 			}
@@ -79,9 +78,9 @@ namespace ImageToASCIIConverter
 
 		static void MergeAudioAndVideo(string inputVideoPath, string audioPath, string outputVideoPath)
 		{
-			string ffmpegArgs = $"-i {inputVideoPath} -i {audioPath} -c:v copy -c:a aac -strict experimental {outputVideoPath}";
+			var ffmpegArgs = $"-i {inputVideoPath} -i {audioPath} -c:v copy -c:a aac -strict experimental {outputVideoPath}";
 
-			ProcessStartInfo startInfo = new ProcessStartInfo
+			var startInfo = new ProcessStartInfo
 			{
 				FileName = "ffmpeg",
 				Arguments = ffmpegArgs,
@@ -90,7 +89,7 @@ namespace ImageToASCIIConverter
 				CreateNoWindow = false
 			};
 
-			using (Process process = Process.Start(startInfo))
+			using (var process = Process.Start(startInfo)!)
 			{
 				process.WaitForExit();
 			}

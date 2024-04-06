@@ -5,14 +5,13 @@
 		static void Main()
 		{
 			ProjectManager.ShowProjectList();
-			int projectNumber = ProjectManager.SetProjectNumber();
+			var projectNumber = ProjectManager.SetProjectNumber();
 			var project = ProjectManager.GetProject(projectNumber);
 			
 			if (project != null)
 			{
 				var renderer = new Renderer();
 				var converter = FormatFactory.GetConverter(project.Category, renderer);
-
 				converter?.Convert(project);
 			}
 		}
